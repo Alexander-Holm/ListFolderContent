@@ -1,0 +1,52 @@
+﻿<UserControl x:Class="ListFolderContent.Controls.FolderPicker"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ListFolderContent.Controls"
+             xmlns:validation="clr-namespace:ListFolderContent.Classes.Validation"
+             mc:Ignorable="d" 
+             d:DesignHeight="100" d:DesignWidth="200">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Styles/Generic.xaml" />
+                <ResourceDictionary Source="../Styles/ValidationError.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    
+    <StackPanel 
+        Orientation="Vertical" 
+        DataContext="{Binding RelativeSource={RelativeSource AncestorType=local:FolderPicker}}">
+       
+        <Button 
+            Content="Bläddra..." 
+            Click="OpenFolderPicker" 
+            HorizontalAlignment="Left"
+            Padding="6 2"
+            Margin="0 0 0 6"
+        />
+        
+        <TextBox Name="TextBox" Style="{StaticResource TextInput}" >
+            <TextBox.Text>
+                <Binding Path="FolderPath" UpdateSourceTrigger="PropertyChanged">
+                    <Binding.ValidationRules>
+                        <validation:RequiredValidation />
+                    </Binding.ValidationRules>
+                </Binding>
+            </TextBox.Text>
+        </TextBox>
+
+        <ItemsControl
+            Name="ErrorList"
+            ItemsSource="{Binding
+                ElementName=TextBox,
+                Path=(Validation.Errors)
+            }"
+            ItemTemplate="{StaticResource ValidationError}"
+        />
+
+    </StackPanel>
+</UserControl>

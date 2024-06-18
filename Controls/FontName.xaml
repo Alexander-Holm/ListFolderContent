@@ -1,0 +1,128 @@
+﻿<UserControl x:Class="ListFolderContent.Controls.FontName"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ListFolderContent.Controls"
+             xmlns:classes="clr-namespace:ListFolderContent.Classes"
+             xmlns:validation="clr-namespace:ListFolderContent.Classes.Validation"
+             mc:Ignorable="d" 
+             d:DesignHeight="200" d:DesignWidth="200">
+
+    <UserControl.Resources>
+        <ResourceDictionary Source="../Styles/ValidationError.xaml" /> 
+    </UserControl.Resources>
+
+    <StackPanel 
+        Orientation="Vertical" 
+        DataContext="{Binding RelativeSource={RelativeSource AncestorType=local:FontName}}">
+
+        <ComboBox 
+            x:Name="FontComboBox"
+            ItemsSource="{Binding FontList, Mode=OneWay}"
+            IsEditable="True"
+            IsTextSearchEnabled="True"
+            TextSearch.TextPath="Name"
+            SelectedIndex="{Binding 
+                SelectedIndex, 
+                RelativeSource={RelativeSource AncestorType=local:FontName},
+                Mode=OneWay}"            
+            FontSize="14"
+            FontFamily="{Binding Text, TargetNullValue='Global User Interface'}"
+            Padding="10"
+        >
+            <!--Item-->
+            <ComboBox.ItemTemplate>
+                <DataTemplate DataType="classes:Font">
+                    <Border 
+                        x:Name="Item" 
+                        Width="400"
+                        Padding="8 2"
+                        BorderThickness="0 1"
+                        BorderBrush="Transparent">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock
+                                x:Name="Text"
+                                Text="{Binding Name}" 
+                                FontFamily="{Binding Name}"
+                                FontSize="18" 
+                                Grid.Column="0"/>
+                            <Image 
+                                x:Name="CloudIcon"
+                                Source="/Assets/CloudDownload.png"
+                                Width="20" Height="20"
+                                Margin="10 0"
+                                Visibility="Hidden"
+                                Grid.Column="1"/>
+                        </Grid>
+                    </Border>
+
+                    <DataTemplate.Triggers>
+                        <!--Style för icke installerade-->
+                        <DataTrigger Binding="{Binding IsInstalled}" Value="false">
+                            <Setter TargetName="Item" Property="Background" Value="#f5f5f5"/>
+                            <Setter TargetName="Text" Property="Foreground" Value="#666666"/>
+                            <Setter TargetName="CloudIcon" Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                        <!--Selected item i listan-->
+                        <DataTrigger Binding="{Binding 
+                            IsSelected, 
+                            RelativeSource={RelativeSource AncestorType=ComboBoxItem}}" 
+                            Value="true">
+                            <Setter TargetName="Item" Property="Background" Value="#e3efff"/>
+                            <Setter TargetName="Item" Property="BorderBrush" Value="#e3efff"/>
+                        </DataTrigger>
+                        <!--Hover-->
+                        <DataTrigger Binding="{Binding 
+                            IsMouseOver, 
+                            RelativeSource={RelativeSource AncestorType=ComboBoxItem}}" 
+                            Value="true">
+                            <Setter TargetName="Item" Property="BorderBrush" Value="Gray"/>
+                            <Setter TargetName="Item" Property="Background" Value="#f0f0f0" />
+                        </DataTrigger>
+                    </DataTemplate.Triggers>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>            
+
+            <!--Tar bort default-style för items-->
+            <ComboBox.ItemContainerStyle>
+                <Style TargetType="ComboBoxItem" >
+                    <Setter Property="Padding" Value="0" />
+                    <Setter Property="BorderThickness" Value="0"/>
+                </Style>
+            </ComboBox.ItemContainerStyle>
+
+            <!--Laddar inte hela listan direkt = snabbare-->
+            <ComboBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <VirtualizingStackPanel MinWidth="400" />
+                </ItemsPanelTemplate>
+            </ComboBox.ItemsPanel>
+
+            <!--Validation-->
+            <ComboBox.Text>
+                <Binding Path="Text" Mode="TwoWay">
+                    <Binding.ValidationRules>
+                        <validation:RequiredValidation/>
+                    </Binding.ValidationRules>
+                </Binding>
+            </ComboBox.Text>
+        </ComboBox>
+        
+        
+        <ItemsControl
+            Name="ErrorList"
+            ItemsSource="{Binding
+                ElementName=FontComboBox,
+                Path=(Validation.Errors)
+            }"
+            ItemTemplate="{StaticResource ValidationError}"
+        />
+
+    </StackPanel>
+</UserControl>

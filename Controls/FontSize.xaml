@@ -1,0 +1,50 @@
+﻿<UserControl x:Class="ListFolderContent.Controls.FontSize"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ListFolderContent.Controls"
+             xmlns:classes="clr-namespace:ListFolderContent.Classes"
+             xmlns:validation="clr-namespace:ListFolderContent.Classes.Validation"
+             mc:Ignorable="d" 
+             d:DesignHeight="250" d:DesignWidth="150">
+    
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Styles/ValidationError.xaml" />                
+            </ResourceDictionary.MergedDictionaries>
+            <classes:FontSizeConverter x:Key="FontSizeConverter" />
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <StackPanel
+        DataContext="{Binding RelativeSource={RelativeSource AncestorType=local:FontSize}}">
+        
+        <TextBox
+            x:Name="FontSizeInputBox"
+            Width="40" Height="30"
+            HorizontalAlignment="Left"
+            TextAlignment="Center"
+            VerticalContentAlignment="Center">
+            <TextBox.Text>
+                <Binding Path="Value" UpdateSourceTrigger="PropertyChanged">
+                    <Binding.Converter>
+                        <classes:FontSizeConverter/>
+                    </Binding.Converter>
+                    <Binding.ValidationRules>
+                        <validation:IntegerValidation />
+                    </Binding.ValidationRules>
+                </Binding>
+            </TextBox.Text>
+        </TextBox>
+
+        <ItemsControl
+            x:Name="ErrorList" 
+            ItemsSource="{Binding 
+                ElementName=FontSizeInputBox,
+                Path=(Validation.Errors)
+            }"
+            ItemTemplate="{StaticResource ValidationError}"/>
+    </StackPanel>
+</UserControl>

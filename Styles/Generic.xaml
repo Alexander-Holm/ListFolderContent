@@ -1,0 +1,24 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Style x:Key="InputGroup" TargetType="Border">
+        <Setter Property="Margin" Value="24 18" />
+        <!-- 
+        Ingen padding top,
+        används alltid tillsammans med Label
+        som har margin top
+        -->
+        <Setter Property="Padding" Value="40 0 40 30" />
+        <Setter Property="CornerRadius" Value="2" />
+        <Setter Property="VerticalAlignment" Value="Top" />
+    </Style>
+       
+    <Style x:Key="TextInput" TargetType="Control">
+        <Setter Property="Padding" Value="10" />
+    </Style>
+
+    <Style TargetType="Button">
+        <Setter Property="ToolTipService.InitialShowDelay" Value="100" />
+    </Style>
+    
+</ResourceDictionary>

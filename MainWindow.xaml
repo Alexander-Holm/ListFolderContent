@@ -1,0 +1,187 @@
+﻿<Window x:Class="ListFolderContent.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        xmlns:controls="clr-namespace:ListFolderContent.Controls"
+        mc:Ignorable="d"
+        Title="Skapa innehållsförteckning"
+        SizeToContent="WidthAndHeight"
+        DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles/Generic.xaml"/>
+                <ResourceDictionary Source="Styles/Buttons.xaml"/>
+                <ResourceDictionary Source="Styles/Labels.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+    
+    <ScrollViewer 
+        VerticalScrollBarVisibility="Auto" 
+        HorizontalScrollBarVisibility="Auto"
+        Padding="40 20">
+        <!-- Binding Width för att child WrapPanel ska kunna wrappa inuti parent ScrollViewer -->
+        <StackPanel 
+            Orientation="Vertical"
+            MinWidth="300"
+            Width="{Binding 
+                Path=ViewportWidth, 
+                RelativeSource={RelativeSource AncestorType=ScrollViewer}
+            }">
+
+            <WrapPanel 
+                Orientation="Horizontal" 
+                HorizontalAlignment="Center">                
+                <Border
+                    Width="300"
+                    Style="{StaticResource InputGroup}"
+                    Background="#edeef2">
+                    <StackPanel>
+                        <Label 
+                            Content="Titel" 
+                            Target="{Binding ElementName=TitleText}" 
+                            Style="{StaticResource LabelLarge}"/>
+                        <TextBox 
+                            Name="TitleText" 
+                            Text="{Binding DocumentTitle}" 
+                            Style="{StaticResource TextInput}"/>
+                        <Label 
+                            Content="Undertitel" 
+                            Target="{Binding ElementName=SubtitleText}"
+                            Style="{StaticResource LabelLarge}"/>
+                        <TextBox 
+                            Name="SubtitleText" 
+                            Text="{Binding DocumentSubtitle}" 
+                            Style="{StaticResource TextInput}"/>
+                        <Label 
+                            Content="Font"
+                            Target="{Binding ElementName=FontNameInput}" 
+                            Style="{StaticResource LabelLarge}"/>
+                        <TextBlock Margin="0 0 0 4">
+                            Välj från listan eller skriv in en egen
+                        </TextBlock>
+                        <controls:FontName
+                            x:Name="FontNameInput"
+                            FontList="{Binding FontList, Mode=OneWay}"
+                            Text="{Binding SelectedFont, Mode=TwoWay}" />
+                    </StackPanel>
+                </Border>
+
+                <Border
+                    Style="{StaticResource InputGroup}"
+                    Background="#edf2f0">
+                    <StackPanel>
+                        <Label Content="Textstorlek" Style="{StaticResource LabelLarge}" />
+                        <StackPanel DataContext="{Binding FontSizes}" >
+                            <Label
+                                Content="Titel"
+                                Target="{Binding ElementName=TitleSize}"
+                                Style="{StaticResource LabelSmall}"
+                                Margin="0"
+                            />
+                            <controls:FontSize x:Name="TitleSize" Value="{Binding Title, Mode=TwoWay}" />
+                            <Label
+                                Content="Underitel"
+                                Target="{Binding ElementName=SubtitleSize}"
+                                Style="{StaticResource LabelSmall}"
+                            />
+                            <controls:FontSize x:Name="SubtitleSize" Value="{Binding Subtitle, Mode=TwoWay}" />
+                            <Label
+                                Content="Bokstavsrubrik"
+                                Target="{Binding ElementName=LetterSize}"
+                                Style="{StaticResource LabelSmall}"
+                            />
+                            <controls:FontSize x:Name="LetterSize" Value="{Binding Letter, Mode=TwoWay}" />
+                            <Label
+                                Content="Filnamn"
+                                Target="{Binding ElementName=FileSize}"
+                                Style="{StaticResource LabelSmall}"
+                            />
+                            <controls:FontSize x:Name="FileSize" Value="{Binding Filename, Mode=TwoWay}" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <Border
+                    Width="220"
+                    Style="{StaticResource InputGroup}"
+                    Background="#edf1f2">
+                    <StackPanel >
+                        <Label 
+                            Content="Alla bokstäver" 
+                            Target="{Binding ElementName=EmptyLettersCheckbox}"
+                            Style="{StaticResource LabelLarge}"/>
+                        <CheckBox 
+                            x:Name="EmptyLettersCheckbox" 
+                            IsChecked="{Binding WriteEmptyLetters}" >
+                            <TextBlock TextWrapping="Wrap">
+                                Ska alla bokstavsrubriker skrivas, 
+                                även de som inga filnamn börjar på
+                            </TextBlock>
+                        </CheckBox>
+
+                        <Label
+                            Content="Mappar"
+                            Style="{StaticResource LabelLarge}" 
+                            Target="{Binding ElementName=IncludeDirectoriesCheckbox}"/>
+                        <CheckBox
+                            x:Name="IncludeDirectoriesCheckbox"
+                            IsChecked="{Binding IncludeDirectories}">
+                            <TextBlock TextWrapping="Wrap">
+                                Ska namn på mappar tas med eller bara filnamn
+                            </TextBlock>
+                        </CheckBox>
+
+                        <Label 
+                            Content="Spalter" 
+                            Target="{Binding ElementName=ColumnCountInput}" 
+                            Style="{StaticResource LabelLarge}"/>
+                        <ComboBox 
+                            Name="ColumnCountInput"
+                            SelectedItem="{Binding Columns}"
+                            HorizontalAlignment="Left"
+                            Padding="12 4">
+                            <ComboBox.ItemsSource>
+                                <x:Array Type="sys:Int32">
+                                    <sys:Int32>1</sys:Int32>
+                                    <sys:Int32>2</sys:Int32>
+                                </x:Array>
+                            </ComboBox.ItemsSource>
+                        </ComboBox>
+                    </StackPanel>
+                </Border>
+            </WrapPanel>
+            
+            <!--Ligger utanför WrapPanel ovan för att kunna centrera-->
+            <Border
+                Width="{Binding Width, RelativeSource={RelativeSource AncestorType=StackPanel}}"
+                MaxWidth="600"
+                Style="{StaticResource InputGroup}"
+                Background="#f2f1ed">
+                <StackPanel>
+                    <Label Content="Välj mapp" Style="{StaticResource LabelLarge}"/>
+                    <controls:FolderPicker FolderPath="{Binding FolderPath, Mode=TwoWay}" />
+                </StackPanel>                    
+            </Border>
+
+            <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button 
+                    Content="Spara inställningar"
+                    ToolTip="Behåller nuvarande inställningar nästa gång programmet öppnas"
+                    Style="{StaticResource SaveButton}"
+                    Command="{Binding SaveCommand}"
+                    CommandParameter="{Binding}"/>
+
+                <Button 
+                    Content="Skapa Word-dokument"
+                    Style="{StaticResource SubmitButton}"
+                    Command="{Binding SubmitCommand}"
+                    CommandParameter="{Binding}"/>
+            </WrapPanel>
+        </StackPanel>
+    </ScrollViewer>
+</Window>
